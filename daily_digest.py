@@ -105,8 +105,10 @@ def _fmt(x: float) -> str:
 def build_text(packets: List[Dict[str, Any]], scan_date: dt.date) -> str:
     """Compact, ntfy-friendly plain-text digest of the qualified bets."""
     quals = [p for p in packets if p["qualified"]]
+    n = len(quals)
+    noun = "bet" if n == 1 else "bets"
     lines = [
-        f"💰 {len(quals)} bets found today (Over 1.5) 🔥",
+        f"💰 {n} {noun} found today (Over 1.5) 🔥",
         "",
     ]
     if not quals:
@@ -132,10 +134,8 @@ def build_text(packets: List[Dict[str, Any]], scan_date: dt.date) -> str:
 
 
 def _money_lines(quals: List[Dict[str, Any]]) -> List[str]:
-    """Projected returns if every qualified bet wins (stake configurable)."""
+    """Potential return if the bet(s) win (stake configurable)."""
     n = len(quals)
-    if not n:
-        return []
     stake = DIGEST_STAKE
     acc_odds = 1.0
     single_total = 0.0
@@ -145,6 +145,13 @@ def _money_lines(quals: List[Dict[str, Any]]) -> List[str]:
     acca_return = stake * acc_odds
     single_return = stake * single_total
     single_in = stake * n
+
+    if n == 1:
+        return [
+            "",
+            f"📈 If it wins: {single_in:g}€ -> {single_return:.2f}€ (+{single_return - single_in:.2f}€)",
+        ]
+
     return [
         "",
         f"📈 If ALL win:",
