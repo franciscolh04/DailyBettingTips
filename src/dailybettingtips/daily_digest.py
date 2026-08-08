@@ -127,7 +127,7 @@ def build_text(packets: List[Dict[str, Any]], scan_date: dt.date) -> str:
     lines.extend(_money_lines(quals))
     lines.extend([
         "",
-        "📊 Full breakdown in the app!",
+        "📊 Full breakdown: https://dailybettingtips.streamlit.app/",
         "🏆 Daily Betting Tips",
     ])
     return "\n".join(lines)
