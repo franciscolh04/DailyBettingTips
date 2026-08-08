@@ -40,7 +40,7 @@ A bet only qualifies when every step passes — discipline is the whole point.
 - 🔍 **Scans 30+ leagues** — from the Premier League to the USL, sized to run over any season (top-5 EU available on fixture years).
 - 🇵🇹 **True Portuguese bookmaker odds** — Betclic.pt and Betano.pt, fetched via Flashscore's PT geo pool (not foreign 1xBet equivalents).
 - 📱 **Free phone push** (ntfy.sh) every morning — zero-cost notifications, no app store custom cloud.
-- 🗓️ **Portugal-time aware** — fixtures are sliced by the *calendar day in Lisbon*, so 08/08 really means **08/08**, even though Flashscore buckets days in UTC.
+- 🗓️ **Portugal-time aware** — fixtures are sliced by the *calendar day in Lisbon*.
 - 🔍 **Streamlit dashboard** — pick any date, watch the live progress bar, drill into the reasoning behind every pick, and see the full compact breakdown.
 - 💰 **Return projections** — accumulator + separate-stakes lines, adapted to how many bets are live (1 bet, many bets, zero — each correctly worded).
 
