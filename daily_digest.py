@@ -225,7 +225,7 @@ def main() -> None:
     title = f"Daily Betting - {scan_date.strftime('%A %d/%m')}"
     if NTFY_ENABLED and NTFY_TOPIC:
         send_ntfy(text, title)
-    else:
+    if EMAIL_ENABLED:
         send_email(title, build_html(packets, scan_date))
 
 
