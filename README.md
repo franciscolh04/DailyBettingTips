@@ -52,7 +52,7 @@ A bet only qualifies when every step passes — discipline is the whole point.
 
 ```bash
 pip install -r requirements.txt
-streamlit run app.py
+PYTHONPATH=src streamlit run src/bettingbot/app.py
 ```
 
 Pick a date, choose the bookmaker region (default PT), and hit **Scan**. You'll get:
@@ -109,15 +109,22 @@ The file `.github/workflows/daily-digest.yml` runs `daily_digest.py` at:
 
 ```
 .
-├── app.py                    # Streamlit UI (date picker, cards, details dialog)
-├── scanner.py                # Orchestrates the 4-filter scan (Portugal-day aware)
-├── flashscore_client.py      # Flashscore feed client (fixtures, results, H2H, odds)
-├── filters.py                # The 4 sequential filter functions
-├── daily_digest.py           # Notification text builder + ntfy.sh / email senders
-├── config.py                 # Thresholds, leagues, bookmakers, credentials
+├── src/
+│   └── bettingbot/            # the scanner package
+│       ├── app.py             # Streamlit UI (date picker, cards, details dialog)
+│       ├── scanner.py          # Orchestrates the 4-filter scan (Portugal-day aware)
+│       ├── flashscore_client.py# Flashscore feed client (fixtures, results, H2H, odds)
+│       ├── filters.py          # The 4 sequential filter functions
+│       ├── daily_digest.py     # Notification text builder + ntfy.sh / email senders
+│       ├── config.py           # Thresholds, leagues, bookmakers, credentials
+│       └── __init__.py
+├── tests/
+│   └── test_scan.py            # Standalone CLI scan for debugging
+├── docs/
+│   └── setup.md                # Digest + ntfy setup guide
 ├── requirements.txt
 ├── .github/workflows/daily-digest.yml   # Nightly automation
-└── test_scan.py              # Standalone CLI scan for debugging
+└── .env.example
 ```
 
 ---
@@ -126,15 +133,15 @@ The file `.github/workflows/daily-digest.yml` runs `daily_digest.py` at:
 
 1. **Run a scan** (no send):
    ```bash
-   python daily_digest.py --no-send
+   python -m bettingbot.daily_digest --offset 1 --no-send
    ```
-   → prints the exact digest for tomorrow.
+   → prints the exact digest for tomorrow (run this from `src/`).
 
 2. **Send it to your phone**:
    - Install **ntfy** (App Store / Google Play) → subscribe to your topic
    - At the end, `.env` copies `.env.example` and set `NTFY_ENABLED=1` and your `NTFY_TOPIC`
    ```
-   python daily_digest.py
+   python -m bettingbot.daily_digest
    ```
 
 3. **Automate** — push to GitHub, set the `NTFY_TOPIC` secret, and let Actions do the rest.

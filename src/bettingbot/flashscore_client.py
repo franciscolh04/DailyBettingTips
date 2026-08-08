@@ -5,7 +5,7 @@ from typing import Dict, List, Any, Optional
 
 import curl_cffi.requests as creq
 
-from config import TARGET_LEAGUES
+from bettingbot.config import TARGET_LEAGUES
 
 # Slug mapping: our league name -> flashscore league slug segment
 LEAGUE_SLUGS = {

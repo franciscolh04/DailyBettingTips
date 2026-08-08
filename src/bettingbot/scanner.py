@@ -2,14 +2,14 @@ from typing import Dict, Any, List
 import datetime as dt
 from zoneinfo import ZoneInfo
 
-from flashscore_client import FlashscoreClient, compute_team_season_stats, english_team_names
-from filters import (
+from bettingbot.flashscore_client import FlashscoreClient, compute_team_season_stats, english_team_names
+from bettingbot.filters import (
     filter_step1_goals,
     filter_step2_h2h,
     filter_step3_recent_form,
     filter_step4_odds,
 )
-from config import PREFERRED_BOOKMAKERS
+from bettingbot.config import PREFERRED_BOOKMAKERS
 
 PORTUGAL_TZ = ZoneInfo("Europe/Lisbon")
 

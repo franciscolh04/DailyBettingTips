@@ -26,11 +26,11 @@ NTFY_TOPIC=BettingBotDaily-Alpha3-Xray9
 
 ## 4. Run once manually (test)
 ```
-conda run -n betting_bot python daily_digest.py --offset 1 --no-send
+cd src && conda run -n betting_bot python -m bettingbot.daily_digest --offset 1 --no-send
 ```
 Shows the exact digest pushed. Then (when phones are ready):
 ```
-conda run -n betting_bot python daily_digest.py --offset 1
+cd src && conda run -n betting_bot python -m bettingbot.daily_digest --offset 1
 ```
 
 ## 5. Schedule it daily
@@ -51,7 +51,7 @@ Edit your crontab:
 crontab -e
 ```
 ```
-30 6 * * * cd /Users/franciscoheleno/Documents/Coding/Projects/BettingBotDaily && /Users/franciscoheleno/miniconda3/envs/betting_bot/bin/python daily_digest.py --offset 1 >> /tmp/digest.log 2>&1
+30 6 * * * cd /Users/franciscoheleno/Documents/Coding/Projects/BettingBotDaily/src && /Users/franciscoheleno/miniconda3/envs/betting_bot/bin/python -m bettingbot.daily_digest --offset 0 >> /tmp/digest.log 2>&1
 ```
 (replace the path if the env name differs). Requires your Mac to be awake at
 06:30 — enable "schedule" in Energy Saver if you keep it asleep at night.

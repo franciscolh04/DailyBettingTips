@@ -1,5 +1,5 @@
 from typing import Dict, Any, List, Tuple
-from config import (
+from bettingbot.config import (
     MIN_TEAM_GOAL_AVG,
     MIN_COMBINED_GOAL_AVG,
     MIN_H2H_OVER_15_PCT,

@@ -2,9 +2,9 @@
 Live end-to-end test of the Flashscore scanner.
 
 Run it from your machine (Portugal IP) to see Betclic.pt / Betano.pt odds:
-    python test_scan.py
-    python test_scan.py --geo PT --offset 0 --verbose
+PYTHONPATH=src python -m tests.test_scan
 
+    PYTHONPATH=src python -m tests.test_scan --geo PT --offset 0 --verbose
 It reports, for every tracked-league fixture today:
   avg goals per team (F1), H2H stats (F2), recent form (F3), Over 1.5 odds (F4),
 plus which matches qualify.
@@ -13,7 +13,7 @@ import argparse
 import json
 from datetime import datetime
 
-from scanner import FlashscoreScanner
+from bettingbot.scanner import FlashscoreScanner
 
 
 def main() -> None:
@@ -32,7 +32,7 @@ def main() -> None:
         ts = datetime.fromtimestamp(p["kickoff"]).strftime("%a %d/%m %H:%M")
         line = f"{ts} [{p['league']}] {p['team_a']} vs {p['team_b']}"
         line += f" | F1: {p['team_a_avg']:.2f}+{p['team_b_avg']:.2f}"
-        line += f" | F2-H2H: {p['h2h_count']}"
+        line += f" | F2-H2H: {len(p['h2h_matches'])}"
         line += f" | F4-odds: {p['over15_odds'] if p['over15_odds'] else 'n/a'}"
         line += f" | QUALIFIED: {'YES' if p['qualified'] else 'no'}"
         print(line)

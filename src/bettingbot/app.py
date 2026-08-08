@@ -3,7 +3,7 @@ from typing import Dict, Any, List
 
 import streamlit as st
 
-from scanner import FlashscoreScanner
+from bettingbot.scanner import FlashscoreScanner
 
 
 def day_offset(selected: dt.date, today: dt.date) -> int:

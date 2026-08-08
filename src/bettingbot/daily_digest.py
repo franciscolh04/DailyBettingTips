@@ -7,10 +7,10 @@ a summary of the qualified bets (with per-filter analysis) via:
   - push   to ntfy.sh/<NTFY_TOPIC>     [free phone push, recommended]
 
 Usage:
-    python daily_digest.py                        # scan tomorrow, send via configured channels
-    python daily_digest.py --offset 0             # scan today
-    python daily_digest.py --ntfy                 # force ntfy send
-    python daily_digest.py --no-send              # just run the scan, print the summary
+    python -m bettingbot.daily_digest                    # scan tomorrow, send via configured channels
+    python -m bettingbot.daily_digest --offset 0         # scan today
+    python -m bettingbot.daily_digest --ntfy             # force ntfy send
+    python -m bettingbot.daily_digest --no-send          # just run the scan, print the summary
 """
 import argparse
 import datetime as dt
@@ -25,8 +25,8 @@ from typing import Any, Dict, List
 
 import curl_cffi.requests as creq
 
-from scanner import FlashscoreScanner
-from config import (
+from bettingbot.scanner import FlashscoreScanner
+from bettingbot.config import (
     EMAIL_ENABLED, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_TLS,
     EMAIL_FROM, EMAIL_TO, EMAIL_SUBJECT_PREFIX,
     NTFY_TOPIC, NTFY_ENABLED, NTFY_URL, DIGEST_STAKE,

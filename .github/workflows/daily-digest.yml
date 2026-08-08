@@ -34,4 +34,5 @@ jobs:
           SMTP_TLS: ${{ secrets.SMTP_TLS }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
-        run: python daily_digest.py --offset 0
+        run: python -m bettingbot.daily_digest --offset 0
+        working-directory: src
