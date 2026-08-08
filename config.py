@@ -3,6 +3,21 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
+def _env(name: str, default: str = "") -> str:
+    """Env var, treating empty/unset as missing."""
+    val = os.getenv(name, "")
+    return val if val else default
+
+
+def _env_int(name: str, default: int) -> int:
+    """Env var parsed as int, falling back to default when empty/unset."""
+    val = _env(name, str(default))
+    try:
+        return int(val)
+    except ValueError:
+        return default
+
 # API-Football (api-football.com) — free tier: 100 requests/day, 10 req/min
 API_FOOTBALL_KEY = os.getenv("API_FOOTBALL_KEY", "")
 API_FOOTBALL_BASE_URL = "https://v3.football.api-sports.io"
@@ -35,20 +50,20 @@ OVER_UNDER_15_SELECTOR = "Over/Under 1.5"  # matched against bet names
 MIN_INTERVAL_BETWEEN_REQUESTS_S = 6.5
 
 # Email delivery (SMTP) for the daily digest script
-EMAIL_ENABLED = os.getenv("EMAIL_ENABLED", "0") == "1"
-SMTP_HOST = os.getenv("SMTP_HOST", "")
-SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USER = os.getenv("SMTP_USER", "")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
-SMTP_TLS = os.getenv("SMTP_TLS", "1") == "1"
-EMAIL_FROM = os.getenv("EMAIL_FROM", SMTP_USER)
-EMAIL_TO = os.getenv("EMAIL_TO", "")          # comma-separated list allowed
-EMAIL_SUBJECT_PREFIX = os.getenv("EMAIL_SUBJECT_PREFIX", "[BettingBot]")
+EMAIL_ENABLED = _env("EMAIL_ENABLED", "0") == "1"
+SMTP_HOST = _env("SMTP_HOST")
+SMTP_PORT = _env_int("SMTP_PORT", 587)
+SMTP_USER = _env("SMTP_USER")
+SMTP_PASSWORD = _env("SMTP_PASSWORD")
+SMTP_TLS = _env("SMTP_TLS", "1") == "1"
+EMAIL_FROM = _env("EMAIL_FROM", SMTP_USER)
+EMAIL_TO = _env("EMAIL_TO", "")               # comma-separated list allowed
+EMAIL_SUBJECT_PREFIX = _env("EMAIL_SUBJECT_PREFIX", "[BettingBot]")
 
 # ntfy.sh push notification (free phone push — recommended)
-NTFY_ENABLED = os.getenv("NTFY_ENABLED", "0") == "1"
-NTFY_TOPIC = os.getenv("NTFY_TOPIC", "")      # pick a hard-to-guess name, e.g. bettingbot-7x9k2
-NTFY_URL = os.getenv("NTFY_URL", "https://ntfy.sh")
+NTFY_ENABLED = _env("NTFY_ENABLED", "0") == "1"
+NTFY_TOPIC = _env("NTFY_TOPIC")               # pick a hard-to-guess name, e.g. bettingbot-7x9k2
+NTFY_URL = _env("NTFY_URL", "https://ntfy.sh")
 
 # Assumed stake for the "if all hit" profit line in the digest
-DIGEST_STAKE = float(os.getenv("DIGEST_STAKE", "1.0"))
+DIGEST_STAKE = float(_env("DIGEST_STAKE", "1.0"))
