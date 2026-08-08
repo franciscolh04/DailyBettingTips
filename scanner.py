@@ -1,4 +1,6 @@
 from typing import Dict, Any, List
+import datetime as dt
+from zoneinfo import ZoneInfo
 
 from flashscore_client import FlashscoreClient, compute_team_season_stats, english_team_names
 from filters import (
@@ -9,9 +11,11 @@ from filters import (
 )
 from config import PREFERRED_BOOKMAKERS
 
+PORTUGAL_TZ = ZoneInfo("Europe/Lisbon")
+
 
 class FlashscoreScanner:
-    """Runs the 4-filter strategy on today's fixtures from Flashscore data."""
+    """Runs the 4-filter strategy on fixtures from Flashscore data."""
 
     def __init__(self, client: FlashscoreClient | None = None):
         self.client = client or FlashscoreClient()
@@ -19,22 +23,25 @@ class FlashscoreScanner:
     def scan(self, day_offset: int = 0, geo_ip_code: str = "PT",
              progress=None) -> List[Dict[str, Any]]:
         """
-        Scan fixtures. `progress(a: float, msg: str)` callback invoked during
-        the scan to drive a loading bar (a in [0,1]).
+        Scan fixtures for the Portugal-calendar day `day_offset` days from today.
+        `progress(a: float, msg: str)` callback invoked during the scan.
         """
         if progress is None:
             progress = lambda a, b: None
-        progress(0.05, "Fetching fixtures list...")
-        fixtures = self.client.fetch_fixtures(day_offset)
+
+        target_date = (dt.datetime.now(PORTUGAL_TZ).date()
+                       + dt.timedelta(days=day_offset))
+
+        progress(0.05, "Fetching fixtures window...")
+        fixtures = self._fetch_for_portugal_date(target_date)
 
         # cache league results per league (one HTTP call per league)
         league_cache: Dict[str, List[Dict[str, Any]]] = {}
         stats_cache: Dict[str, Dict[str, Dict[str, float]]] = {}
 
-        launches = {f["league"] for f in fixtures}
-        total_l = max(len(launches), 1)
-        active_odds_fetch = False
-        for i, league in enumerate(sorted(launches)):
+        leagues = {f["league"] for f in fixtures}
+        total_l = max(len(leagues), 1)
+        for i, league in enumerate(sorted(leagues)):
             progress(0.1 + 0.3 * i / total_l, f"Fetching {league} season results...")
             league_cache[league] = self.client.fetch_league_results(league)
             stats_cache[league] = compute_team_season_stats(league_cache[league])
@@ -123,6 +130,24 @@ class FlashscoreScanner:
 
         progress(1.0, "Scan complete.")
         return results
+
+    def _fetch_for_portugal_date(self, target_date: dt.date) -> List[Dict[str, Any]]:
+        """
+        Fetch fixtures across a small feed-offset window and keep only the ones
+        kicking off on `target_date` in the Europe/Lisbon timezone.
+
+        Flashscore's feed buckets are aligned to UTC-ish midnight, so one offset
+        can span two Portugal calendar days. Scanning a 3-offset window and
+        filtering by local kickoff date gives a correct "Portugal day" slice.
+        """
+        seen: Dict[str, Dict[str, Any]] = {}
+        for off in range(-1, 2):
+            for fx in self.client.fetch_fixtures(off):
+                kickoff_date = dt.datetime.fromtimestamp(
+                    fx["kickoff"], PORTUGAL_TZ).date()
+                if kickoff_date == target_date:
+                    seen[fx["id"]] = fx
+        return list(seen.values())
 
     @staticmethod
     def _recent_form(results: List[Dict[str, Any]], team_id: str) -> List[Dict[str, Any]]:
