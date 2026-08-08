@@ -17,3 +17,4 @@ venv/
 # Local test output
 *.log
 daily_digest.txt
+daily_digest_LATEST.txt
