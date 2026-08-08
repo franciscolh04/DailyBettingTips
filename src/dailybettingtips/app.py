@@ -3,7 +3,7 @@ from typing import Dict, Any, List
 
 import streamlit as st
 
-from bettingbot.scanner import FlashscoreScanner
+from dailybettingtips.scanner import FlashscoreScanner
 
 
 def day_offset(selected: dt.date, today: dt.date) -> int:
@@ -91,12 +91,12 @@ def card(p: Dict[str, Any], highlight: bool = False, section: str = "all") -> No
 
 # ------------------------------------------------------------------- main UI
 st.set_page_config(
-    page_title="BettingBot Daily - Over 1.5 Goals Strategy",
+    page_title="Daily Betting Tips - Over 1.5 Goals Strategy",
     page_icon="⚽",
     layout="wide",
 )
 
-st.title("⚽ BettingBot Daily — Over 1.5 Goals Strategy")
+st.title("⚽ Daily Betting Tips — Over 1.5 Goals Strategy")
 st.caption(
     "Automated daily scanner. Strategy: Season goal average → Head-to-head → Recent form → "
     "Betclic.pt / Betano.pt odds ≥ 1.15."

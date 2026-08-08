@@ -13,7 +13,7 @@ import argparse
 import json
 from datetime import datetime
 
-from bettingbot.scanner import FlashscoreScanner
+from dailybettingtips.scanner import FlashscoreScanner
 
 
 def main() -> None:

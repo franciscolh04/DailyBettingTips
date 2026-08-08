@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚽ BettingBot Daily
+# ⚽ Daily Betting Tips
 
 **Daily Over 1.5 Goals picks** — scanned with a quantifiable 4-filter strategy and delivered straight to your phone every morning.
 
@@ -14,7 +14,7 @@ Built on live Flashscore data · Portuguese odds (Betclic.pt / Betano.pt) · Fre
 
 ## 🧠 What it does
 
-Every day at **10:00 in Portugal**, BettingBot Daily scans **30+ football leagues**, screens every fixture against a **4-filter strategy**, and pushes the qualified **Over 1.5 goals** bets to your phone as a clean notification — with the exact proposed stake breakdown. No platform needed, no watching matches, just a disciplined daily signal.
+Every day at **10:00 in Portugal**, Daily Betting Tips scans **30+ football leagues**, screens every fixture against a **4-filter strategy**, and pushes the qualified **Over 1.5 goals** bets to your phone as a clean notification — with the exact proposed stake breakdown. No platform needed, no watching matches, just a disciplined daily signal.
 
 The same engine powers an interactive **Streamlit app** where you can browse any date, inspect every filter decision, and see per-bookmaker odds.
 
@@ -52,7 +52,7 @@ A bet only qualifies when every step passes — discipline is the whole point.
 
 ```bash
 pip install -r requirements.txt
-PYTHONPATH=src streamlit run src/bettingbot/app.py
+PYTHONPATH=src streamlit run src/dailybettingtips/app.py
 ```
 
 Pick a date, choose the bookmaker region (default PT), and hit **Scan**. You'll get:
@@ -84,7 +84,7 @@ Example of the push you'd get (7 bets):
   · Separately (7 x 1€ = 7€) -> 9.04€ (+2.04€)
 
 📊 Full breakdown in the app!
-🏆 BettingBot Daily
+🏆 Daily Betting Tips
 ```
 
 One bet → "💰 1 bet found today" and a single *"If it wins: 1€ -> 1.18€"* instead of an accumulator. No bets → just a reminder to stay disciplined.
@@ -110,7 +110,7 @@ The file `.github/workflows/daily-digest.yml` runs `daily_digest.py` at:
 ```
 .
 ├── src/
-│   └── bettingbot/            # the scanner package
+│   └── dailybettingtips/            # the scanner package
 │       ├── app.py             # Streamlit UI (date picker, cards, details dialog)
 │       ├── scanner.py          # Orchestrates the 4-filter scan (Portugal-day aware)
 │       ├── flashscore_client.py# Flashscore feed client (fixtures, results, H2H, odds)
@@ -133,7 +133,7 @@ The file `.github/workflows/daily-digest.yml` runs `daily_digest.py` at:
 
 1. **Run a scan** (no send):
    ```bash
-   python -m bettingbot.daily_digest --offset 1 --no-send
+   python -m dailybettingtips.daily_digest --offset 1 --no-send
    ```
    → prints the exact digest for tomorrow (run this from `src/`).
 
@@ -141,7 +141,7 @@ The file `.github/workflows/daily-digest.yml` runs `daily_digest.py` at:
    - Install **ntfy** (App Store / Google Play) → subscribe to your topic
    - At the end, `.env` copies `.env.example` and set `NTFY_ENABLED=1` and your `NTFY_TOPIC`
    ```
-   python -m bettingbot.daily_digest
+   python -m dailybettingtips.daily_digest
    ```
 
 3. **Automate** — push to GitHub, set the `NTFY_TOPIC` secret, and let Actions do the rest.

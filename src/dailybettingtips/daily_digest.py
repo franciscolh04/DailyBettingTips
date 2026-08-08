@@ -7,10 +7,10 @@ a summary of the qualified bets (with per-filter analysis) via:
   - push   to ntfy.sh/<NTFY_TOPIC>     [free phone push, recommended]
 
 Usage:
-    python -m bettingbot.daily_digest                    # scan tomorrow, send via configured channels
-    python -m bettingbot.daily_digest --offset 0         # scan today
-    python -m bettingbot.daily_digest --ntfy             # force ntfy send
-    python -m bettingbot.daily_digest --no-send          # just run the scan, print the summary
+    python -m dailybettingtips.daily_digest                    # scan tomorrow, send via configured channels
+    python -m dailybettingtips.daily_digest --offset 0         # scan today
+    python -m dailybettingtips.daily_digest --ntfy             # force ntfy send
+    python -m dailybettingtips.daily_digest --no-send          # just run the scan, print the summary
 """
 import argparse
 import datetime as dt
@@ -25,8 +25,8 @@ from typing import Any, Dict, List
 
 import curl_cffi.requests as creq
 
-from bettingbot.scanner import FlashscoreScanner
-from bettingbot.config import (
+from dailybettingtips.scanner import FlashscoreScanner
+from dailybettingtips.config import (
     EMAIL_ENABLED, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_TLS,
     EMAIL_FROM, EMAIL_TO, EMAIL_SUBJECT_PREFIX,
     NTFY_TOPIC, NTFY_ENABLED, NTFY_URL, DIGEST_STAKE,
@@ -38,7 +38,7 @@ def build_html(packets: List[Dict[str, Any]], scan_date: dt.date) -> str:
     scan = scan_date.strftime("%A, %d %b %Y")
 
     html = f"""<html><body style="font-family:Arial,Helvetica,sans-serif;background:#f7f7f7;padding:16px;">
-<h2 style="margin:0 0 4px;">⚽ BettingBot Daily — Over 1.5 Goals</h2>
+<h2 style="margin:0 0 4px;">⚽ Daily Betting Tips — Over 1.5 Goals</h2>
 <p style="color:#666;margin:0 0 18px;">{scan} · {len(quals)}/{len(packets)} matches qualified</p>
 """
     if not quals:
@@ -128,7 +128,7 @@ def build_text(packets: List[Dict[str, Any]], scan_date: dt.date) -> str:
     lines.extend([
         "",
         "📊 Full breakdown in the app!",
-        "🏆 BettingBot Daily",
+        "🏆 Daily Betting Tips",
     ])
     return "\n".join(lines)
 

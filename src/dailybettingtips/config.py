@@ -60,11 +60,11 @@ SMTP_PASSWORD = _env("SMTP_PASSWORD")
 SMTP_TLS = _env("SMTP_TLS", "1") == "1"
 EMAIL_FROM = _env("EMAIL_FROM", SMTP_USER)
 EMAIL_TO = _env("EMAIL_TO", "")               # comma-separated list allowed
-EMAIL_SUBJECT_PREFIX = _env("EMAIL_SUBJECT_PREFIX", "[BettingBot]")
+EMAIL_SUBJECT_PREFIX = _env("EMAIL_SUBJECT_PREFIX", "[Daily Betting Tips]")
 
 # ntfy.sh push notification (free phone push — recommended)
 NTFY_ENABLED = _env("NTFY_ENABLED", "0") == "1"
-NTFY_TOPIC = _env("NTFY_TOPIC")               # pick a hard-to-guess name, e.g. bettingbot-7x9k2
+NTFY_TOPIC = _env("NTFY_TOPIC")               # pick a hard-to-guess name, e.g. dailybettingtips-7x9k2
 NTFY_URL = _env("NTFY_URL", "https://ntfy.sh")
 
 # Assumed stake for the "if all hit" profit line in the digest
