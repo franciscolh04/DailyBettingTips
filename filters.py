@@ -9,7 +9,7 @@ from config import (
 
 def filter_step1_goals(team_a_avg: float, team_b_avg: float) -> Tuple[bool, str]:
     """
-    Step 1: Média de gols por time
+    Step 1: Season goal average.
     Both teams must average >= 1.0 goals per match, combined >= 2.0.
     """
     if team_a_avg < MIN_TEAM_GOAL_AVG or team_b_avg < MIN_TEAM_GOAL_AVG:
@@ -24,7 +24,7 @@ def filter_step1_goals(team_a_avg: float, team_b_avg: float) -> Tuple[bool, str]
 
 def filter_step2_h2h(h2h_matches: List[Dict[str, Any]]) -> Tuple[bool, str]:
     """
-    Step 2: Histórico de confrontos diretos (H2H)
+    Step 2: Head-to-head history.
     Teams must have >80% of past H2H matches with > 1.5 goals.
     h2h_matches: list of dicts with match results (e.g., {"home_goals": 2, "away_goals": 1})
     """
@@ -48,7 +48,7 @@ def filter_step2_h2h(h2h_matches: List[Dict[str, Any]]) -> Tuple[bool, str]:
 
 def filter_step3_recent_form(team_a_recent: List[Dict[str, Any]], team_b_recent: List[Dict[str, Any]]) -> Tuple[bool, str]:
     """
-    Step 3: Forma recente dos times
+    Step 3: Recent form.
     Both teams must have scored in at least 4 of their last 5 matches.
     Each match item: {"scored": bool} or goals scored by the team > 0.
     """
@@ -70,10 +70,10 @@ def filter_step3_recent_form(team_a_recent: List[Dict[str, Any]], team_b_recent:
 
 def filter_step4_odds(odds_dict: Dict[str, float]) -> Tuple[bool, str, float]:
     """
-    Step 4: Odds com vantagem positiva (Betclic PT / Betano PT)
+    Step 4: Odds value (Betclic PT / Betano PT).
     odds_dict: {"betclic": 1.25, "betano": 1.22}
     Must have at least one bookmaker with odds >= MIN_DECIMAL_ODDS (1.15).
-  - Returns (passed, message, best_odds)
+    Returns (passed, message, best_odds).
     """
     valid_odds = {bm: odd for bm, odd in odds_dict.items() if odd >= MIN_DECIMAL_ODDS}
     
