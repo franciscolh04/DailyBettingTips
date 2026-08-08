@@ -1,0 +1,37 @@
+name: daily-digest
+
+on:
+  schedule:
+    # 6:30 AM Portugal (UTC+1 summer, UTC+0 winter). GitHub uses UTC.
+    # PT is UTC+1 in summer (Apr-Oct) -> pick 05:30 UTC ; adjust as you like.
+    - cron: "30 5 * * *"
+  workflow_dispatch: {} # lets you hit "Run workflow" manually to test
+
+jobs:
+  scan-and-notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run daily scan + ntfy push
+        env:
+          NTFY_ENABLED: "1"
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          NTFY_URL: ${{ secrets.NTFY_URL }}
+          EMAIL_ENABLED: ${{ secrets.EMAIL_ENABLED }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_TLS: ${{ secrets.SMTP_TLS }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        run: python daily_digest.py --offset 1
