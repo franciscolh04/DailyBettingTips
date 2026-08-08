@@ -25,7 +25,7 @@ from typing import Any, Dict, List
 
 import curl_cffi.requests as creq
 
-from dailybettingtips.scanner import FlashscoreScanner
+from dailybettingtips.scanner import FlashscoreScanner, PORTUGAL_TZ
 from dailybettingtips.config import (
     EMAIL_ENABLED, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, SMTP_TLS,
     EMAIL_FROM, EMAIL_TO, EMAIL_SUBJECT_PREFIX,
@@ -188,11 +188,16 @@ def main() -> None:
                     help="save the text digest to daily_digest_LATEST.txt")
     args = ap.parse_args()
 
+    # "Today" is the Portugal calendar day — GitHub runners and Streamlit
+    # Cloud run on UTC, which lags Portugal by up to an hour. Computing the
+    # label day in UTC would show e.g. "Saturday 08/08" for Sunday 09/08
+    # games.
+    portugal_today = dt.datetime.now(PORTUGAL_TZ).date()
     if args.date:
         scan_date = dt.date.fromisoformat(args.date)
-        offset = (scan_date - dt.date.today()).days
+        offset = (scan_date - portugal_today).days
     else:
-        scan_date = dt.date.today() + dt.timedelta(days=args.offset)
+        scan_date = portugal_today + dt.timedelta(days=args.offset)
         offset = args.offset
 
     print(f"Scanning {scan_date} (offset={offset})…")

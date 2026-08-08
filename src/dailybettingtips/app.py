@@ -3,7 +3,7 @@ from typing import Dict, Any, List
 
 import streamlit as st
 
-from dailybettingtips.scanner import FlashscoreScanner
+from dailybettingtips.scanner import FlashscoreScanner, PORTUGAL_TZ
 
 
 def day_offset(selected: dt.date, today: dt.date) -> int:
@@ -103,10 +103,12 @@ def main() -> None:
         "Betclic.pt / Betano.pt odds ≥ 1.15."
     )
 
+    portugal_today = dt.datetime.now(PORTUGAL_TZ).date()
+
     with st.container(border=True):
         c1, c2, c3 = st.columns([2, 1, 1])
         with c1:
-            scan_date = st.date_input("📅 Pick a date to scan", value=dt.date.today())
+            scan_date = st.date_input("📅 Pick a date to scan", value=portugal_today)
         with c2:
             geo = st.selectbox("🌍 Bookmaker region", ["PT", "US", "BR", "EN"], index=0)
         with c3:
@@ -126,8 +128,8 @@ def main() -> None:
         st.session_state.packets = None  # trigger fresh scan below
 
     if st.session_state.packets is None and st.session_state.scan_date is not None:
-        offset = day_offset(st.session_state.scan_date, dt.date.today())
-        if st.session_state.scan_date < dt.date.today():
+        offset = day_offset(st.session_state.scan_date, portugal_today)
+        if st.session_state.scan_date < portugal_today:
             st.warning("That date is in the past — bookmaker odds will not be historical.")
 
         holder = st.empty()
