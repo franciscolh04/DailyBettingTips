@@ -90,81 +90,86 @@ def card(p: Dict[str, Any], highlight: bool = False, section: str = "all") -> No
 
 
 # ------------------------------------------------------------------- main UI
-st.set_page_config(
-    page_title="Daily Betting Tips - Over 1.5 Goals Strategy",
-    page_icon="⚽",
-    layout="wide",
-)
+def main() -> None:
+    st.set_page_config(
+        page_title="Daily Betting Tips - Over 1.5 Goals Strategy",
+        page_icon="⚽",
+        layout="wide",
+    )
 
-st.title("⚽ Daily Betting Tips — Over 1.5 Goals Strategy")
-st.caption(
-    "Automated daily scanner. Strategy: Season goal average → Head-to-head → Recent form → "
-    "Betclic.pt / Betano.pt odds ≥ 1.15."
-)
+    st.title("⚽ Daily Betting Tips — Over 1.5 Goals Strategy")
+    st.caption(
+        "Automated daily scanner. Strategy: Season goal average → Head-to-head → Recent form → "
+        "Betclic.pt / Betano.pt odds ≥ 1.15."
+    )
 
-with st.container(border=True):
-    c1, c2, c3 = st.columns([2, 1, 1])
-    with c1:
-        scan_date = st.date_input("📅 Pick a date to scan", value=dt.date.today())
-    with c2:
-        geo = st.selectbox("🌍 Bookmaker region", ["PT", "US", "BR", "EN"], index=0)
-    with c3:
-        st.markdown("####")
-        go = st.button("🔍 Scan this date", type="primary", use_container_width=True)
+    with st.container(border=True):
+        c1, c2, c3 = st.columns([2, 1, 1])
+        with c1:
+            scan_date = st.date_input("📅 Pick a date to scan", value=dt.date.today())
+        with c2:
+            geo = st.selectbox("🌍 Bookmaker region", ["PT", "US", "BR", "EN"], index=0)
+        with c3:
+            st.markdown("####")
+            go = st.button("🔍 Scan this date", type="primary", use_container_width=True)
 
-# Persist scan results across reruns (clicks on "Details" buttons otherwise
-# wipe the results, because a rerun re-executes the whole script).
-if "packets" not in st.session_state:
-    st.session_state.packets = None
-if "scan_date" not in st.session_state:
-    st.session_state.scan_date = None
+    # Persist scan results across reruns (clicks on "Details" buttons otherwise
+    # wipe the results, because a rerun re-executes the whole script).
+    if "packets" not in st.session_state:
+        st.session_state.packets = None
+    if "scan_date" not in st.session_state:
+        st.session_state.scan_date = None
 
-if go:
-    st.session_state.scan_date = scan_date
-    st.session_state.geo = geo
-    st.session_state.packets = None  # trigger fresh scan below
+    if go:
+        st.session_state.scan_date = scan_date
+        st.session_state.geo = geo
+        st.session_state.packets = None  # trigger fresh scan below
 
-if st.session_state.packets is None and st.session_state.scan_date is not None:
-    offset = day_offset(st.session_state.scan_date, dt.date.today())
-    if st.session_state.scan_date < dt.date.today():
-        st.warning("That date is in the past — bookmaker odds will not be historical.")
+    if st.session_state.packets is None and st.session_state.scan_date is not None:
+        offset = day_offset(st.session_state.scan_date, dt.date.today())
+        if st.session_state.scan_date < dt.date.today():
+            st.warning("That date is in the past — bookmaker odds will not be historical.")
 
-    holder = st.empty()
-    bar = holder.progress(0.0)
-    status = holder.caption("")
+        holder = st.empty()
+        bar = holder.progress(0.0)
+        status = holder.caption("")
 
-    def tick(a, msg):
-        bar.progress(min(1.0, a))
-        status.caption(f"**{msg}**")
+        def tick(a, msg):
+            bar.progress(min(1.0, a))
+            status.caption(f"**{msg}**")
 
-    with st.spinner("Scanning matches…"):
-        packets = FlashscoreScanner().scan(
-            day_offset=offset,
-            geo_ip_code=st.session_state.get("geo", geo),
-            progress=tick,
-        )
-    holder.empty()
-    st.session_state.packets = packets
+        with st.spinner("Scanning matches…"):
+            packets = FlashscoreScanner().scan(
+                day_offset=offset,
+                geo_ip_code=st.session_state.get("geo", geo),
+                progress=tick,
+            )
+        holder.empty()
+        st.session_state.packets = packets
 
-if st.session_state.packets is not None:
-    packets = st.session_state.packets
+    if st.session_state.packets is not None:
+        packets = st.session_state.packets
 
-    quals = [p for p in packets if p["qualified"]]
-    st.metric("Qualified bets", len(quals), delta=f"{len(packets)} matches scanned")
+        quals = [p for p in packets if p["qualified"]]
+        st.metric("Qualified bets", len(quals), delta=f"{len(packets)} matches scanned")
 
-    if quals:
-        st.markdown("## 🔥 Qualified bets")
+        if quals:
+            st.markdown("## 🔥 Qualified bets")
+            cols = st.columns(3)
+            for i, p in enumerate(quals):
+                with cols[i % 3]:
+                    card(p, highlight=True, section="qualified")
+        else:
+            st.info("No match passed all 4 filters. Per strategy: **don't bet** today.")
+
+        qual_ids = {p["id"] for p in quals}
+        remaining = [p for p in packets if p["id"] not in qual_ids]
+        st.markdown("## 📋 All matches")
         cols = st.columns(3)
-        for i, p in enumerate(quals):
+        for i, p in enumerate(remaining):
             with cols[i % 3]:
-                card(p, highlight=True, section="qualified")
-    else:
-        st.info("No match passed all 4 filters. Per strategy: **don't bet** today.")
+                card(p, section="all")
 
-    qual_ids = {p["id"] for p in quals}
-    remaining = [p for p in packets if p["id"] not in qual_ids]
-    st.markdown("## 📋 All matches")
-    cols = st.columns(3)
-    for i, p in enumerate(remaining):
-        with cols[i % 3]:
-            card(p, section="all")
+
+if __name__ == "__main__":
+    main()
